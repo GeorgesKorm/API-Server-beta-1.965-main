@@ -77,16 +77,48 @@
     padding: 8px;
     padding-bottom: 0px;
     scroll-snap-align: start;
+    margin-bottom: 20px;
 }
 
 .postContainer {
     display: grid;
-    grid-template-columns: 4fr 1fr;
+    grid-template-columns: auto auto;
     align-items: top;
-    background-color: rgb(87, 140, 255);
     border-radius: 6px;
+    padding: 5px;
+    max-width: 800px;
+    margin: auto;
+}
+.postContainer .cmdIcon{
+    display: none;
 }
 
+.postContainer:hover .cmdIcon {
+    display: block;
+}
+.cmdIconsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.editCmd {
+    background-color: blue;
+    color: white;
+    padding: 5px;
+    border-radius: 6px;
+}
+.deleteCmd {
+    background-color: blue;
+    color: white;
+    padding: 5px;
+    border-radius: 6px;
+}
+.cmdIconsContainer{
+   text-align: right;
+   margin: 5px; 
+}
 .waitingGifcontainer {
     text-align: center;
     margin: auto;
@@ -96,21 +128,6 @@
     height: 300px;
 }
 
-.postContainer .cmdIcon {
-    display: none;
-}
-
-.postContainer:hover .cmdIcon {
-    display: block;
-}
-
-.postLayout {
-    display: grid;
-    grid-template-columns: 100px auto;
-    padding: 10px;
-    gap: 8px;
-    align-items: center;
-}
 
 .postInfo {
     display: grid;
@@ -121,21 +138,42 @@
 }
 
 .postTitle {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
+    padding-bottom: 5px;
     font-weight: bold;
-    color: white;
+    color: rgb(0, 0, 0);
+    grid-column: 1 / span 2;
+    grid-row: 2;
+
 }
 
 .postText {
-    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    grid-column: 1 / span 2;
+    grid-row: 5;
 }
 
 .postCategory {
-    color: white;
+    color: blue;
+    font-weight: bold;
+    padding: 5px;
 }
-.postImage{
-    width: 200px;
+.postImage {
+    grid-column: 1 / span 2;
+    grid-row: 3;
+    background-image: url('http://localhost:5000/assetsRepository/78f177e0-46c0-11ee-9c7d-4dfffb69e19c.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /* Ensure the element occupies the intended size */
+    width: 100%;
+    height: 400px; /* Adjust height as needed for grid alignment */
+    object-fit: cover;
+
 }
+
 .postDate{
     color: grey;
     font-size:small;
@@ -148,11 +186,9 @@
 }
 
 .cmdIcon {
-    font-size: 1.5rem;
+    font-size: 1rem;
     -webkit-text-stroke-color: white;
-    -webkit-text-fill-color: rgb(0, 87, 204);
     text-align: center;
-    margin: 8px;
     cursor: pointer;
 }
 

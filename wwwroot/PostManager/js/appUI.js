@@ -24,7 +24,7 @@ async function Init_UI() {
 
 function start_Periodic_Refresh() {
     setInterval(async () => {
-        if (! hold_Periodic_Refresh) {
+        if (!hold_Periodic_Refresh) {
             let etag = await Posts_API.HEAD();
             if (currentETag != etag) {
                 currentETag = etag;
@@ -191,7 +191,6 @@ async function renderDeletePostForm(id) {
                         <div class="Post">
                             <span class="PostCategory">${Post.Category}</span>
                             <span class="PostTitle">${Post.Title}</span>
-                            <a href="${Post.Image}"> ${favicon}</a>
                             <span class="PostDate">${Post.Creation}</span>
                             <span class="PostText"> ${Post.Text}</span>
                         </div>
@@ -203,9 +202,7 @@ async function renderDeletePostForm(id) {
                 </div>
             </div>   
             <br>
-            <input type="button" value="Effacer" id="deletePost" class="btn btn-primary">
-            <input type="button" value="Annuler" id="cancel" class="btn btn-secondary">
-        </div>    
+           </div>    
         `);
         $('#deletePost').on("click", async function () {
             showWaitingGif();
@@ -246,14 +243,13 @@ function renderPostForm(Post = null) {
     eraseContent();
     hold_Periodic_Refresh = true;
     let create = Post == null;
-    let favicon = `<div class="big-favicon"></div>`;
     if (create)
         Post = newPost();
     else
-    $("#actionTitle").text(create ? "Création" : "Modification");
+        $("#actionTitle").text(create ? "Création" : "Modification");
     $("#content").append(`
         <form class="form" id="PostForm">
-            <a href="${Post.Title}" target="_blank" id="faviconLink" class="big-favicon" > ${favicon} </a>
+            <a href="${Post.Title}" target="_blank" id="faviconLink" class="big-favicon" ></a>
             <br>
             <input type="hidden" name="Id" value="${Post.Id}"/>
 
@@ -268,12 +264,12 @@ function renderPostForm(Post = null) {
                 InvalidMessage="Le titre comporte un caractère illégal"
                 value="${Post.Title}"
             />
-            <label for="Url" class="form-label">Url </label>
+            <label for="Url" class="form-label">Texte </label>
             <input
-                class="form-control URL"
-                name="Url"
-                id="Url"
-                placeholder="Url"
+                class="form-control Text"
+                name="Texte"
+                id="Texte"
+                placeholder="Texte"
                 required
                 value="${Post.Text}" 
             />
@@ -286,11 +282,20 @@ function renderPostForm(Post = null) {
                 required
                 value="${Post.Category}"
             />
+            <label class="form-label">Image </label>
+            <div   class='imageUploader' 
+                   newImage='${create}' 
+                   controlId='Avatar' 
+                   imageSrc='${Post.Image}' 
+                   waitingImage="Loading_icon.gif">
+            </div>
+            <hr>
             <br>
             <input type="submit" value="Enregistrer" id="savePost" class="btn btn-primary">
             <input type="button" value="Annuler" id="cancel" class="btn btn-secondary">
         </form>
     `);
+    initImageUploaders();
     initFormValidation();
     $('#PostForm').on("submit", async function (event) {
         event.preventDefault();
@@ -318,18 +323,18 @@ function makeFavicon(url, big = false) {
 }
 function renderPost(Post) {
     return $(`
-     <div class="PostRow" Post_id=${Post.Id}">
-        <div class="PostContainer noselect">
-            <div class="PostLayout">
-                <div class="Post">
-                    <span class="PostTitle">${Post.Title}</span>
+     <div class="postRow" Post_id=${Post.Id}">
+        <div class="postContainer noselect">
+                <span class="postCategory">${Post.Category}</span>
+                <div Class="cmdIconsContainer">
+                    <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
+                    <span class="deleteCmd cmdIcon fa fa-trash" deletePostsId="${Post.Id}" title="Effacer ${Post.Title}"></span>
                 </div>
-                <span class="PostCategory">${Post.Category}</span>
-            </div>
-            <div class="PostCommandPanel">
-                <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-                <span class="deleteCmd cmdIcon fa fa-trash" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
-            </div>
+                <span class="postTitle">${Post.Title}</span>
+                <div class="postImage" style="background-image:url('${Post.Image}')"></div>
+                <span class="postDate">${Post.Creation}</span>
+                <br>
+                <span class="postDescriptionContainer">${Post.Text}</span>
         </div>
     </div>           
     `);
