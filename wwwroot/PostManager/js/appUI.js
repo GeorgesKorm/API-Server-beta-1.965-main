@@ -214,6 +214,7 @@ async function renderDeletePostForm(id) {
         });
         $('#cancel').on("click", function () {
             renderPosts();
+            console.log("allo");
         });
     } else {
         renderError("Publication introuvable!");
@@ -267,8 +268,8 @@ function renderPostForm(Post = null) {
             <label for="Url" class="form-label">Texte </label>
             <input
                 class="form-control Text"
-                name="Texte"
-                id="Texte"
+                name="Text"
+                id="Text"
                 placeholder="Texte"
                 required
                 value="${Post.Text}" 
@@ -285,7 +286,7 @@ function renderPostForm(Post = null) {
             <label class="form-label">Image </label>
             <div   class='imageUploader' 
                    newImage='${create}' 
-                   controlId='Avatar' 
+                   controlId='Image' 
                    imageSrc='${Post.Image}' 
                    waitingImage="Loading_icon.gif">
             </div>
@@ -303,12 +304,13 @@ function renderPostForm(Post = null) {
         showWaitingGif();
         let result = await Posts_API.Save(Post, create);
         if (result)
-            renderPost();
+            renderPosts();
         else
             renderError("Une erreur est survenue!");
     });
     $('#cancel').on("click", function () {
-        renderPost();
+        renderPosts();
+        console.log("not working whyu?")
     });
 }
 function makeFavicon(url, big = false) {
