@@ -7,7 +7,7 @@ let hold_Periodic_Refresh = false;
 Init_UI();
 
 async function Init_UI() {
-    currentETag = await Posts_API.HEAD();
+    currentETag = await HEAD();
     renderPosts();
     $('#createPost').on("click", async function () {
         saveContentScrollPosition();
@@ -25,7 +25,7 @@ async function Init_UI() {
 function start_Periodic_Refresh() {
     setInterval(async () => {
         if (!hold_Periodic_Refresh) {
-            let etag = await Posts_API.HEAD();
+            let etag = await HEAD();
             if (currentETag != etag) {
                 currentETag = etag;
                 renderPosts();
@@ -111,9 +111,9 @@ async function renderPosts() {
     $("#actionTitle").text("Liste des publications");
     $("#createPost").show();
     $("#abort").hide();
-    let response = await Posts_API.Get();
+    let response = await API_GetPosts();
     currentETag = response.ETag;
-    let Posts = response.data;
+    let Posts = response;
     compileCategories(Posts)
     eraseContent();
     if (Posts !== null) {
@@ -164,8 +164,8 @@ function renderCreatePostForm() {
 }
 async function renderEditPostForm(id) {
     showWaitingGif();
-    let response = await Posts_API.Get(id)
-    let Post = response.data;
+    let response = await API_GetPost(id)
+    let Post = response;
     if (Post !== null)
         renderPostForm(Post);
     else
@@ -176,8 +176,8 @@ async function renderDeletePostForm(id) {
     $("#createPost").hide();
     $("#abort").show();
     $("#actionTitle").text("Retrait");
-    let response = await Posts_API.Get(id)
-    let Post = response.data;
+    let response = await API_GetPost(id)
+    let Post = response;
     // let favicon = makeFavicon(Post.Image); //not useful maybe
     eraseContent();
     if (Post !== null) {
@@ -206,7 +206,7 @@ async function renderDeletePostForm(id) {
         `);
         $('#deletePost').on("click", async function () {
             showWaitingGif();
-            let result = await Posts_API.Delete(Post.Id);
+            let result = await API_DeletePost(Post.Id);
             if (result)
                 renderPosts();
             else
@@ -282,6 +282,15 @@ function renderPostForm(Post = null) {
                 required
                 value="${Post.Category}"
             />
+            <label for="Creation" class="form-label">Date de création </label>
+            <input 
+                class="form-control"
+                name="Creation"
+                id="Creation"
+                placeholder="Date de création"
+                required
+                value="${Post.Creation}"
+            />
             <label class="form-label">Image </label>
             <div   class='imageUploader' 
                    newImage='${create}' 
@@ -301,7 +310,7 @@ function renderPostForm(Post = null) {
         event.preventDefault();
         let Post = getFormData($("#PostForm"));
         showWaitingGif();
-        let result = await Posts_API.Save(Post, create);
+        let result = await API_SavePost(Post, create);
         if (result)
             renderPosts();
         else
