@@ -236,7 +236,7 @@ function newPost() {
     Post.Text = "";
     Post.Category = "";
     Post.Image = "";
-    Post.Creation = 0;
+    Post.Creation = utilities.secondsToDateString(Math.floor(Date.now() / 1000));
     return Post;
 }
 function renderPostForm(Post = null) {
