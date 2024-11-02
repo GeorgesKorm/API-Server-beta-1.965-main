@@ -1,4 +1,4 @@
-const periodicRefreshPeriod = 30;
+const periodicRefreshPeriod = 60;
 let contentScrollPosition = 0;
 let selectedCategory = "";
 let currentETag = "";
@@ -185,22 +185,24 @@ async function renderDeletePostForm(id) {
         <div class="PostdeleteForm">
             <h4>Effacer la publication suivante?</h4>
             <br>
-            <div class="PostRow" Post_id=${Post.Id}">
-                <div class="PostContainer noselect">
-                    <div class="PostLayout">
-                        <div class="Post">
-                            <span class="PostCategory">${Post.Category}</span>
-                            <span class="PostTitle">${Post.Title}</span>
-                            <span class="PostDate">${Post.Creation}</span>
-                            <span class="PostText"> ${Post.Text}</span>
-                        </div>
-                    </div>
-                    <div class="PostCommandPanel">
-                        <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-                        <span class="deleteCmd cmdIcon fa fa-trash" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
-                    </div>
-                </div>
-            </div>   
+            <div class="postRow" Post_id="${Post.Id}">
+        <div class="postContainer noselect">
+            <span class="postCategory">${Post.Category}</span>
+            <div class="cmdIconsContainer">
+            </div>
+            <span class="postTitle">${Post.Title}</span>
+            <div class="postImage" style="background-image:url('${Post.Image}')"></div>
+            <span class="postDate">${Post.Creation}</span>
+            <br>
+            <span class="postDescriptionContainer expanded">${Post.Text}</span>
+        </div>
+        <div class="cmdButtonsCenter">
+            <input type="button" value="Effacer" id="deletePost" class="btn btn-primary">
+            <input type="button" value="Annuler" id="cancel" class="btn btn-secondary">   
+        </div>
+
+        <hr>    
+    </div> 
             <br>
            </div>    
         `);
@@ -273,8 +275,7 @@ function renderPostForm(Post = null) {
                 id="Text"
                 placeholder="Texte"
                 required
-            >${Post.Text}
-            </textarea>
+            >${Post.Text}</textarea>
             <label for="Category" class="form-label">Catégorie </label>
             <input 
                 class="form-control"
@@ -340,7 +341,7 @@ function renderPost(Post) {
             <span class="postCategory">${Post.Category}</span>
             <div class="cmdIconsContainer">
                 <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-                <span class="deleteCmd cmdIcon fa fa-trash" deletePostsId="${Post.Id}" title="Effacer ${Post.Title}"></span>
+                <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
             </div>
             <span class="postTitle">${Post.Title}</span>
             <div class="postImage" style="background-image:url('${Post.Image}')"></div>

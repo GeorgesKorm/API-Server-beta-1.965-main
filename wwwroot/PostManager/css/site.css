@@ -247,10 +247,13 @@ textarea{
     padding: 20px;
 }
 
-.contactdeleteForm {
-    margin: 20px;
+.PostdeleteForm {
+    margin: auto;
+    padding: auto;
 }
-
+.cmdButtonsCenter{
+    margin: auto;
+}
 .aboutContainer {
     padding: 20px;
     text-align: center;
