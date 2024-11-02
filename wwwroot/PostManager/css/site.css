@@ -146,7 +146,21 @@
     grid-row: 2;
 
 }
+.postDescriptionContainer {
+    white-space: pre-wrap;
+    max-height: 100px; /* Set your desired max height */
+    overflow: hidden;
+    transition: max-height 0.3s ease; /* Smooth transition */
+    grid-column: 1 / span 2;
+    grid-row: 5;
+}
 
+.postDescriptionContainer.expanded {
+    max-height: none;
+}
+.showMoreBtn {
+    grid-column: 1 / span 2;
+}
 .postText {
     font-size: 1.1rem;
     font-weight: bold;

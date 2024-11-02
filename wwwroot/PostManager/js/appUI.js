@@ -1,4 +1,4 @@
-const periodicRefreshPeriod = 10;
+const periodicRefreshPeriod = 30;
 let contentScrollPosition = 0;
 let selectedCategory = "";
 let currentETag = "";
@@ -334,21 +334,38 @@ function makeFavicon(url, big = false) {
     return `<div class="${faviconClass}" style="background-image: url('${url}');"></div>`;
 }
 function renderPost(Post) {
-    return $(`
-     <div class="postRow" Post_id=${Post.Id}">
+    const postElement = $(`
+     <div class="postRow" Post_id="${Post.Id}">
         <div class="postContainer noselect">
-                <span class="postCategory">${Post.Category}</span>
-                <div Class="cmdIconsContainer">
-                    <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-                    <span class="deleteCmd cmdIcon fa fa-trash" deletePostsId="${Post.Id}" title="Effacer ${Post.Title}"></span>
-                </div>
-                <span class="postTitle">${Post.Title}</span>
-                <div class="postImage" style="background-image:url('${Post.Image}')"></div>
-                <span class="postDate">${Post.Creation}</span>
-                <br>
-                <span class="postDescriptionContainer">${Post.Text}</span>
+            <span class="postCategory">${Post.Category}</span>
+            <div class="cmdIconsContainer">
+                <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
+                <span class="deleteCmd cmdIcon fa fa-trash" deletePostsId="${Post.Id}" title="Effacer ${Post.Title}"></span>
+            </div>
+            <span class="postTitle">${Post.Title}</span>
+            <div class="postImage" style="background-image:url('${Post.Image}')"></div>
+            <span class="postDate">${Post.Creation}</span>
+            <br>
+            <span class="postDescriptionContainer collapsed">${Post.Text}</span>
+            <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
         </div>
-            <hr>       
+        <hr>       
     </div>    
     `);
+
+    return postElement;
 }
+
+$(document).on('click', '.showMoreBtn', function() {
+    const $descriptionContainer = $(this).siblings('.postDescriptionContainer');
+
+    // Toggle the expanded class
+    $descriptionContainer.toggleClass('expanded');
+
+    // Change button text based on the current state
+    if ($descriptionContainer.hasClass('expanded')) {
+        $(this).text('Afficher Moins'); // Change to "Show Less"
+    } else {
+        $(this).text('Afficher Plus'); // Change back to "Show More"
+    }
+});
