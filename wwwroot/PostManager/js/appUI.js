@@ -214,7 +214,6 @@ async function renderDeletePostForm(id) {
         });
         $('#cancel').on("click", function () {
             renderPosts();
-            console.log("allo");
         });
     } else {
         renderError("Publication introuvable!");
