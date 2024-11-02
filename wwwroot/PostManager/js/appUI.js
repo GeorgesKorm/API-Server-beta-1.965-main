@@ -255,7 +255,7 @@ function renderPostForm(Post = null) {
 
             <label for="Title" class="form-label">Titre </label>
             <input 
-                class="form-control Alpha"
+                class="form-control Text"
                 name="Title" 
                 id="Title" 
                 placeholder="Titre"
@@ -336,6 +336,7 @@ function renderPost(Post) {
                 <br>
                 <span class="postDescriptionContainer">${Post.Text}</span>
         </div>
-    </div>           
+            <hr>       
+    </div>    
     `);
 }
