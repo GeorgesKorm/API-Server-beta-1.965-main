@@ -243,8 +243,10 @@ function renderPostForm(Post = null) {
     eraseContent();
     hold_Periodic_Refresh = true;
     let create = Post == null;
-    if (create)
+    if (create){
         Post = newPost();
+        Post.Image = "images/noPic.jpg";
+    }
     else
         $("#actionTitle").text(create ? "Création" : "Modification");
     $("#content").append(`
