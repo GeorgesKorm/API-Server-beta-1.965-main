@@ -217,8 +217,11 @@
 
 form {
     padding: 20px;
-    max-width: 350px;
+    max-width: 700px;
     margin: auto;
+}
+textarea{
+    height: 450px;;  
 }
 
 .errorContainer {
