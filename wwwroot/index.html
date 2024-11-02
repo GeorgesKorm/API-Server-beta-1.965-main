@@ -22,6 +22,29 @@
     <div style="margin:auto; width:90%">
         <h1>Liste des services</h1>
 
+        <h2><a href="api/posts" target="_blank">Publications</a></h2>
+        <div class="endpoints">
+            <span>GET</span>
+            <span>api/publications</span>
+            <span></span>
+
+            <span>GET</span>
+            <span>api/publications/id</span>
+            <span></span>
+
+            <span>POST</span>
+            <span>api/publications</span>
+            <span>{ "Title": string, "Url": string, "Category": string } Title doit être unique</span>
+
+            <span>PUT</span>
+            <span>api/publications/id</span>
+            <span>{ "Title": string, "Url": string, "Category": string } Title doit être unique</span>
+
+            <span>DELETE</span>
+            <span>api/publications/id</span>
+            <span></span>
+        </div>
+
         <h2><a href="api/contacts" target="_blank">Contacts</a></h2>
         <div class="endpoints">
             <span>GET</span>
@@ -68,7 +91,6 @@
             <span>DELETE</span>
             <span>api/bookmarks/id</span>
             <span></span>
-
         </div>
 
     </div>
