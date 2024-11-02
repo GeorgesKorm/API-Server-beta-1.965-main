@@ -264,15 +264,15 @@ function renderPostForm(Post = null) {
                 InvalidMessage="Le titre comporte un caractère illégal"
                 value="${Post.Title}"
             />
-            <label for="Url" class="form-label">Texte </label>
-            <input
+            <label for="Url" class="form-label">Description </label>
+            <textarea
                 class="form-control Text"
                 name="Text"
                 id="Text"
                 placeholder="Texte"
                 required
-                value="${Post.Text}" 
-            />
+            >${Post.Text}
+            </textarea>
             <label for="Category" class="form-label">Catégorie </label>
             <input 
                 class="form-control"
