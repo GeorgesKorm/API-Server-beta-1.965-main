@@ -237,7 +237,21 @@ form {
 textarea{
     height: 450px;;  
 }
-
+#scrollPanel {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
+    scroll-snap-type: y mandatory;
+}
+.postsContainer {
+    margin: auto;
+    margin-left: 8px;
+    width: 100%;
+    max-width: 1600px;
+}
 .errorContainer {
     font-size: 1.2rem;
     width: 100%;

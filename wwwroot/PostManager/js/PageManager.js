@@ -1,4 +1,4 @@
-export default class PageManager {
+class PageManager {
     constructor(scrollPanelId, itemsPanelId, itemLayout, getItemsCallBack) {
         this.scrollPanel = $(`#${scrollPanelId}`);
         this.itemsPanel = $(`#${itemsPanelId}`);
