@@ -62,6 +62,7 @@ function renderError(message) {
 }
 async function renderWords(queryString) {
     if (search != "") queryString += "&keywords=" + search;
+    console.log(queryString);
     addWaitingGif();
     let words = await API.getWords(queryString);
     if (API.error)

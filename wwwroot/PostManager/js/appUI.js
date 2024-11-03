@@ -128,8 +128,10 @@ function compileCategories(posts) {
         updateDropDownMenu(categories);
     }
 }
-async function renderPosts(queryString) {
+async function renderPosts(queryString) { //append pour que ça fonctionne.
+    console.log(queryString);
     if (search != "") queryString += "&keywords=" + search;
+    console.log(queryString);
     hold_Periodic_Refresh = false;
     showWaitingGif();
     $("#actionTitle").text("Liste des publications");
