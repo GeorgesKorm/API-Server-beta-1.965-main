@@ -15,8 +15,9 @@ function secondsToDateString(dateInSeconds, localizationId = 'fr-FR') {
 async function Init_UI() {
     let postItemLayout = {
         width: $("#sample").outerWidth(),
-        height: $("#sample").outerHeight()
+        height: 800 //$("#sample").outerHeight() 800 pour tester le infinite loading..
     };
+    console.log(postItemLayout);
     currentETag = await HEAD();
     pageManager = new PageManager('scrollPanel', 'postsPanel', postItemLayout, renderPosts);
     //renderPosts();
@@ -129,7 +130,6 @@ function compileCategories(posts) {
     }
 }
 async function renderPosts(queryString) { //append pour que ça fonctionne.
-    console.log(queryString);
     if (search != "") queryString += "&keywords=" + search;
     console.log(queryString);
     hold_Periodic_Refresh = false;
