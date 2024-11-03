@@ -1,34 +1,56 @@
-const periodicRefreshPeriod = 10;
+const periodicRefreshPeriod = 60;
 let contentScrollPosition = 0;
 let selectedCategory = "";
 let currentETag = "";
 let hold_Periodic_Refresh = false;
+let search = "";
+let endOfData = false;
+let pageManager;
 
 Init_UI();
-
+function secondsToDateString(dateInSeconds, localizationId = 'fr-FR') {
+    const hoursOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    return new Date(dateInSeconds * 1000).toLocaleDateString(localizationId, hoursOptions);
+}
 async function Init_UI() {
+    let postItemLayout = {
+        width: $("#sample").outerWidth(),
+        height: $("#sample").outerHeight()
+    };
     currentETag = await HEAD();
-    renderPosts();
+    pageManager = new PageManager('scrollPanel', 'postsPanel', postItemLayout, renderPosts);
+    //renderPosts();
     $('#createPost').on("click", async function () {
         saveContentScrollPosition();
         renderCreatePostForm();
     });
     $('#abort').on("click", async function () {
-        renderPosts();
+        //renderPosts();
+        pageManager.reset();
     });
     $('#aboutCmd').on("click", function () {
         renderAbout();
     });
+    $("#searchKey").on("change", () => {
+        doSearch();
+    })
+    $('#doSearch').on('click', () => {
+        doSearch();
+    })
     start_Periodic_Refresh();
 }
-
+function doSearch() {
+    search = $("#searchKey").val().replace(' ', ',');
+    pageManager.reset();
+}
 function start_Periodic_Refresh() {
     setInterval(async () => {
         if (!hold_Periodic_Refresh) {
             let etag = await HEAD();
             if (currentETag != etag) {
                 currentETag = etag;
-                renderPosts();
+                //renderPosts();
+                pageManager.reset();
             }
         }
     },
@@ -88,11 +110,12 @@ function updateDropDownMenu(categories) {
     });
     $('#allCatCmd').on("click", function () {
         selectedCategory = "";
-        renderPosts();
+        //renderPosts();
     });
     $('.category').on("click", function () {
         selectedCategory = $(this).text().trim();
-        renderPosts();
+        //renderPosts();
+        pageManager.reset();
     });
 }
 function compileCategories(posts) {
@@ -105,13 +128,14 @@ function compileCategories(posts) {
         updateDropDownMenu(categories);
     }
 }
-async function renderPosts() {
+async function renderPosts(queryString) {
+    if (search != "") queryString += "&keywords=" + search;
     hold_Periodic_Refresh = false;
     showWaitingGif();
     $("#actionTitle").text("Liste des publications");
     $("#createPost").show();
     $("#abort").hide();
-    let response = await API_GetPosts();
+    let response = await API_GetPosts(queryString);
     currentETag = response.ETag;
     let Posts = response;
     compileCategories(Posts)
@@ -185,22 +209,24 @@ async function renderDeletePostForm(id) {
         <div class="PostdeleteForm">
             <h4>Effacer la publication suivante?</h4>
             <br>
-            <div class="PostRow" Post_id=${Post.Id}">
-                <div class="PostContainer noselect">
-                    <div class="PostLayout">
-                        <div class="Post">
-                            <span class="PostCategory">${Post.Category}</span>
-                            <span class="PostTitle">${Post.Title}</span>
-                            <span class="PostDate">${Post.Creation}</span>
-                            <span class="PostText"> ${Post.Text}</span>
-                        </div>
-                    </div>
-                    <div class="PostCommandPanel">
-                        <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-                        <span class="deleteCmd cmdIcon fa fa-trash" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
-                    </div>
-                </div>
-            </div>   
+            <div class="postRow" Post_id="${Post.Id}">
+        <div class="postContainer noselect">
+            <span class="postCategory">${Post.Category}</span>
+            <div class="cmdIconsContainer">
+            </div>
+            <span class="postTitle">${Post.Title}</span>
+            <div class="postImage" style="background-image:url('${Post.Image}')"></div>
+            <span class="postDate">${secondsToDateString(Post.Creation)}</span>
+            <br>
+            <span class="postDescriptionContainer expanded">${Post.Text}</span>
+        </div>
+        <div class="cmdButtonsCenter">
+            <input type="button" value="Effacer" id="deletePost" class="btn btn-primary">
+            <input type="button" value="Annuler" id="cancel" class="btn btn-secondary">   
+        </div>
+
+        <hr>    
+    </div> 
             <br>
            </div>    
         `);
@@ -208,12 +234,14 @@ async function renderDeletePostForm(id) {
             showWaitingGif();
             let result = await API_DeletePost(Post.Id);
             if (result)
-                renderPosts();
+                //renderPosts();
+                pageManager.reset();
             else
                 renderError("Une erreur est survenue!");
         });
         $('#cancel').on("click", function () {
-            renderPosts();
+            //renderPosts();
+            pageManager.reset();
         });
     } else {
         renderError("Publication introuvable!");
@@ -234,7 +262,7 @@ function newPost() {
     Post.Text = "";
     Post.Category = "";
     Post.Image = "";
-    Post.Creation = 0;
+    Post.Creation = Math.floor(Date.now() / 1000);
     return Post;
 }
 function renderPostForm(Post = null) {
@@ -273,8 +301,7 @@ function renderPostForm(Post = null) {
                 id="Text"
                 placeholder="Texte"
                 required
-            >${Post.Text}
-            </textarea>
+            >${Post.Text}</textarea>
             <label for="Category" class="form-label">Catégorie </label>
             <input 
                 class="form-control"
@@ -284,8 +311,8 @@ function renderPostForm(Post = null) {
                 required
                 value="${Post.Category}"
             />
-            <label for="Creation" class="form-label">Date de création </label>
             <input 
+                type="hidden"
                 class="form-control"
                 name="Creation"
                 id="Creation"
@@ -314,13 +341,15 @@ function renderPostForm(Post = null) {
         showWaitingGif();
         let result = await API_SavePost(Post, create);
         if (result)
-            renderPosts();
+            //renderPosts();
+            pageManager.reset();
+
         else
             renderError("Une erreur est survenue!");
     });
     $('#cancel').on("click", function () {
-        renderPosts();
-        console.log("not working whyu?")
+        //renderPosts();
+        pageManager.reset();
     });
 }
 function makeFavicon(url, big = false) {
@@ -335,20 +364,33 @@ function makeFavicon(url, big = false) {
 }
 function renderPost(Post) {
     return $(`
-     <div class="postRow" Post_id=${Post.Id}">
-        <div class="postContainer noselect">
-                <span class="postCategory">${Post.Category}</span>
-                <div Class="cmdIconsContainer">
-                    <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-                    <span class="deleteCmd cmdIcon fa fa-trash" deletePostsId="${Post.Id}" title="Effacer ${Post.Title}"></span>
-                </div>
-                <span class="postTitle">${Post.Title}</span>
-                <div class="postImage" style="background-image:url('${Post.Image}')"></div>
-                <span class="postDate">${Post.Creation}</span>
-                <br>
-                <span class="postDescriptionContainer">${Post.Text}</span>
+        <div class="postContainer">
+            <span class="postCategory">${Post.Category}</span>
+            <div class="cmdIconsContainer">
+                <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
+                <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
+            </div>
+            <span class="postTitle">${Post.Title}</span>
+            <div class="postImage" style="background-image:url('${Post.Image}')"></div>
+            <span class="postDate">${secondsToDateString(Post.Creation)}</span>
+            <br>
+            <span class="postDescriptionContainer collapsed">${Post.Text}</span>
+            <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
         </div>
-            <hr>       
-    </div>    
+        <hr>
     `);
 }
+
+$(document).on('click', '.showMoreBtn', function() {
+    const $descriptionContainer = $(this).siblings('.postDescriptionContainer');
+
+    // Toggle the expanded class
+    $descriptionContainer.toggleClass('expanded');
+
+    // Change button text based on the current state
+    if ($descriptionContainer.hasClass('expanded')) {
+        $(this).text('Afficher Moins'); // Change to "Show Less"
+    } else {
+        $(this).text('Afficher Plus'); // Change back to "Show More"
+    }
+});
