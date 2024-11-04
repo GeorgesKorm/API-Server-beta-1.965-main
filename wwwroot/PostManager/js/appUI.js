@@ -66,7 +66,7 @@ function renderAbout() {
     $("#content").append(
         $(`
             <div class="aboutContainer">
-                <h2>Gestionnaire de favoris</h2>
+                <h2>Gestionnaire de Publications</h2>
                 <hr>
                 <p>
                     Petite application de gestion de favoris à titre de démonstration
@@ -138,6 +138,7 @@ async function renderPosts(queryString) {
     let response = await API_GetPosts(queryString);
     currentETag = response.ETag;
     let Posts = response;
+    //Posts.sort((a, b) => b.Creation - a.Creation);
     compileCategories(Posts)
     //eraseContent();
     if (Posts !== null) {

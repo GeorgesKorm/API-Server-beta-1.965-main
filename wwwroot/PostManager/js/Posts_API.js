@@ -1,4 +1,5 @@
 const API_URL = "http://localhost:5000/api/posts";
+const API_URL_END ="&sort=Creation,desc";
 let currentHttpError = "";
 
 function API_getcurrentHttpError () {
@@ -18,7 +19,7 @@ function HEAD() {
 function API_GetPosts(query = "") {
     return new Promise(resolve => {
         $.ajax({
-            url: API_URL+query,
+            url: API_URL + query + API_URL_END,
             success: posts => { currentHttpError = ""; resolve(posts); },
             error: (xhr) => { console.log(xhr); resolve(null); }
         });
