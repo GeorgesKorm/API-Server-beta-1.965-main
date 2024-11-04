@@ -74,10 +74,7 @@
 }
 
 .postRow {
-    padding: 8px;
-    padding-bottom: 0px;
     scroll-snap-align: start;
-    margin-bottom: 20px;
 }
 
 .postContainer {

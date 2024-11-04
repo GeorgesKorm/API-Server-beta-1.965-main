@@ -8,6 +8,7 @@ let endOfData = false;
 let pageManager;
 
 Init_UI();
+
 function secondsToDateString(dateInSeconds, localizationId = 'fr-FR') {
     const hoursOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
     return new Date(dateInSeconds * 1000).toLocaleDateString(localizationId, hoursOptions);
@@ -15,18 +16,15 @@ function secondsToDateString(dateInSeconds, localizationId = 'fr-FR') {
 async function Init_UI() {
     let postItemLayout = {
         width: $("#sample").outerWidth(),
-        height: 800 //$("#sample").outerHeight() 800 pour tester le infinite loading..
+        height: $("#sample").outerHeight() //changer la valeur pour tester le inifinite loading
     };
-    console.log(postItemLayout);
     currentETag = await HEAD();
     pageManager = new PageManager('scrollPanel', 'postsPanel', postItemLayout, renderPosts);
-    //renderPosts();
     $('#createPost').on("click", async function () {
         saveContentScrollPosition();
         renderCreatePostForm();
     });
     $('#abort').on("click", async function () {
-        //renderPosts();
         pageManager.reset();
     });
     $('#aboutCmd').on("click", function () {
@@ -50,7 +48,6 @@ function start_Periodic_Refresh() {
             let etag = await HEAD();
             if (currentETag != etag) {
                 currentETag = etag;
-                //renderPosts();
                 pageManager.reset();
             }
         }
@@ -111,11 +108,9 @@ function updateDropDownMenu(categories) {
     });
     $('#allCatCmd').on("click", function () {
         selectedCategory = "";
-        //renderPosts();
     });
     $('.category').on("click", function () {
         selectedCategory = $(this).text().trim();
-        //renderPosts();
         pageManager.reset();
     });
 }
@@ -129,7 +124,7 @@ function compileCategories(posts) {
         updateDropDownMenu(categories);
     }
 }
-async function renderPosts(queryString) { //append pour que ça fonctionne.
+async function renderPosts(queryString) {
     if (search != "") queryString += "&keywords=" + search;
     console.log(queryString);
     hold_Periodic_Refresh = false;
@@ -137,15 +132,15 @@ async function renderPosts(queryString) { //append pour que ça fonctionne.
     $("#actionTitle").text("Liste des publications");
     $("#createPost").show();
     $("#abort").hide();
-    let response = await API_GetPosts(queryString);
+    let response = await API_GetPosts(queryString); 
     currentETag = response.ETag;
-    let Posts = response;
-    compileCategories(Posts)
+    let posts = response;
+    compileCategories(posts)
     eraseContent();
-    if (Posts !== null) {
-        Posts.forEach(Post => {
-            if ((selectedCategory === "") || (selectedCategory === Post.Category))
-                $("#content").append(renderPost(Post));
+    if (posts !== null) {
+        posts.forEach(post => {
+            if ((selectedCategory === "") || (selectedCategory === post.Category))
+                $("#content").append(renderPost(post));
         });
         restoreContentScrollPosition();
         // Attached click events on command icons
@@ -191,9 +186,9 @@ function renderCreatePostForm() {
 async function renderEditPostForm(id) {
     showWaitingGif();
     let response = await API_GetPost(id)
-    let Post = response;
-    if (Post !== null)
-        renderPostForm(Post);
+    let post = response;
+    if (post !== null)
+        renderPostForm(post);
     else
         renderError("Post introuvable!");
 }
@@ -203,24 +198,24 @@ async function renderDeletePostForm(id) {
     $("#abort").show();
     $("#actionTitle").text("Retrait");
     let response = await API_GetPost(id)
-    let Post = response;
+    let post = response;
     // let favicon = makeFavicon(Post.Image); //not useful maybe
     eraseContent();
-    if (Post !== null) {
+    if (post !== null) {
         $("#content").append(`
         <div class="PostdeleteForm">
             <h4>Effacer la publication suivante?</h4>
             <br>
-            <div class="postRow" Post_id="${Post.Id}">
+            <div class="postRow" Post_id="${post.Id}">
         <div class="postContainer noselect">
-            <span class="postCategory">${Post.Category}</span>
+            <span class="postCategory">${post.Category}</span>
             <div class="cmdIconsContainer">
             </div>
-            <span class="postTitle">${Post.Title}</span>
-            <div class="postImage" style="background-image:url('${Post.Image}')"></div>
-            <span class="postDate">${secondsToDateString(Post.Creation)}</span>
+            <span class="postTitle">${post.Title}</span>
+            <div class="postImage" style="background-image:url('${post.Image}')"></div>
+            <span class="postDate">${secondsToDateString(post.Creation)}</span>
             <br>
-            <span class="postDescriptionContainer expanded">${Post.Text}</span>
+            <span class="postDescriptionContainer expanded">${post.Text}</span>
         </div>
         <div class="cmdButtonsCenter">
             <input type="button" value="Effacer" id="deletePost" class="btn btn-primary">
@@ -234,15 +229,13 @@ async function renderDeletePostForm(id) {
         `);
         $('#deletePost').on("click", async function () {
             showWaitingGif();
-            let result = await API_DeletePost(Post.Id);
+            let result = await API_DeletePost(post.Id);
             if (result)
-                //renderPosts();
                 pageManager.reset();
             else
                 renderError("Une erreur est survenue!");
         });
         $('#cancel').on("click", function () {
-            //renderPosts();
             pageManager.reset();
         });
     } else {
@@ -258,32 +251,32 @@ function getFormData($form) {
     return jsonObject;
 }
 function newPost() {
-    Post = {};
-    Post.Id = 0;
-    Post.Title = "";
-    Post.Text = "";
-    Post.Category = "";
-    Post.Image = "";
-    Post.Creation = Math.floor(Date.now() / 1000);
-    return Post;
+    post = {};
+    post.Id = 0;
+    post.Title = "";
+    post.Text = "";
+    post.Category = "";
+    post.Image = "";
+    post.Creation = Math.floor(Date.now() / 1000);
+    return post;
 }
-function renderPostForm(Post = null) {
+function renderPostForm(post = null) {
     $("#createPost").hide();
     $("#abort").show();
     eraseContent();
     hold_Periodic_Refresh = true;
-    let create = Post == null;
+    let create = post == null;
     if (create){
-        Post = newPost();
-        Post.Image = "images/noPic.jpg";
+        post = newPost();
+        post.Image = "images/noPic.jpg";
     }
     else
         $("#actionTitle").text(create ? "Création" : "Modification");
     $("#content").append(`
         <form class="form" id="PostForm">
-            <a href="${Post.Title}" target="_blank" id="faviconLink" class="big-favicon" ></a>
+            <a href="${post.Title}" target="_blank" id="faviconLink" class="big-favicon" ></a>
             <br>
-            <input type="hidden" name="Id" value="${Post.Id}"/>
+            <input type="hidden" name="Id" value="${post.Id}"/>
 
             <label for="Title" class="form-label">Titre </label>
             <input 
@@ -294,7 +287,7 @@ function renderPostForm(Post = null) {
                 required
                 RequireMessage="Veuillez entrer un titre"
                 InvalidMessage="Le titre comporte un caractère illégal"
-                value="${Post.Title}"
+                value="${post.Title}"
             />
             <label for="Url" class="form-label">Description </label>
             <textarea
@@ -303,7 +296,7 @@ function renderPostForm(Post = null) {
                 id="Text"
                 placeholder="Texte"
                 required
-            >${Post.Text}</textarea>
+            >${post.Text}</textarea>
             <label for="Category" class="form-label">Catégorie </label>
             <input 
                 class="form-control"
@@ -311,7 +304,7 @@ function renderPostForm(Post = null) {
                 id="Category"
                 placeholder="Catégorie"
                 required
-                value="${Post.Category}"
+                value="${post.Category}"
             />
             <input 
                 type="hidden"
@@ -320,13 +313,13 @@ function renderPostForm(Post = null) {
                 id="Creation"
                 placeholder="Date de création"
                 required
-                value="${Post.Creation}"
+                value="${post.Creation}"
             />
             <label class="form-label">Image </label>
             <div   class='imageUploader' 
                    newImage='${create}' 
                    controlId='Image' 
-                   imageSrc='${Post.Image}' 
+                   imageSrc='${post.Image}' 
                    waitingImage="Loading_icon.gif">
             </div>
             <hr>
@@ -339,18 +332,16 @@ function renderPostForm(Post = null) {
     initFormValidation();
     $('#PostForm').on("submit", async function (event) {
         event.preventDefault();
-        let Post = getFormData($("#PostForm"));
+        let post = getFormData($("#PostForm"));
         showWaitingGif();
-        let result = await API_SavePost(Post, create);
+        let result = await API_SavePost(post, create);
         if (result)
-            //renderPosts();
             pageManager.reset();
 
         else
             renderError("Une erreur est survenue!");
     });
     $('#cancel').on("click", function () {
-        //renderPosts();
         pageManager.reset();
     });
 }
@@ -364,19 +355,19 @@ function makeFavicon(url, big = false) {
     url = "http://www.google.com/s2/favicons?sz=64&domain=" + url;
     return `<div class="${faviconClass}" style="background-image: url('${url}');"></div>`;
 }
-function renderPost(Post) {
+function renderPost(post) {
     return $(`
         <div class="postContainer">
-            <span class="postCategory">${Post.Category}</span>
+            <span class="postCategory">${post.Category}</span>
             <div class="cmdIconsContainer">
-                <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-                <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
+                <span class="editCmd cmdIcon fa fa-pencil" editPostId="${post.Id}" title="Modifier ${post.Title}"></span>
+                <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${post.Id}" title="Effacer ${post.Title}"></span>
             </div>
-            <span class="postTitle">${Post.Title}</span>
-            <div class="postImage" style="background-image:url('${Post.Image}')"></div>
-            <span class="postDate">${secondsToDateString(Post.Creation)}</span>
+            <span class="postTitle">${post.Title}</span>
+            <div class="postImage" style="background-image:url('${post.Image}')"></div>
+            <span class="postDate">${secondsToDateString(post.Creation)}</span>
             <br>
-            <span class="postDescriptionContainer collapsed">${Post.Text}</span>
+            <span class="postDescriptionContainer collapsed">${post.Text}</span>
             <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
         </div>
         <hr>

@@ -14,9 +14,11 @@ class PageManager {
         this.resetScrollPosition();
         this.update(false);
     }
+    
     installViewportReziseEvent() {
         let instance = this;
         $(window).on('resize', function (e) {
+            console.log("resize");
             clearTimeout(instance.resizeTimer);
             instance.resizeTimer = setTimeout(() => { instance.update(false); }, instance.resizeEndTriggerDelai);
         });
@@ -26,6 +28,8 @@ class PageManager {
         if (nbColumns < 1) nbColumns = 1;
         let nbRows = Math.round(this.scrollPanel.innerHeight() / this.itemLayout.height);
         this.currentPage.limit = nbRows * nbColumns + nbColumns /* make sure to always have a content overflow */;
+        console.log(nbRows); //quand on resize, ça baisse à 0
+        console.log(this.scrollPanel.innerHeight()); //devient 0 à chaque resize.
     }
     currentPageToQueryString(append = false) {
         this.setCurrentPageLimit();

@@ -17,6 +17,7 @@ class PageManager {
     installViewportReziseEvent() {
         let instance = this;
         $(window).on('resize', function (e) {
+            console.log("resize");
             clearTimeout(instance.resizeTimer);
             instance.resizeTimer = setTimeout(() => { instance.update(false); }, instance.resizeEndTriggerDelai);
         });
