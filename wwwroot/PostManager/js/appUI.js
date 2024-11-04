@@ -131,7 +131,7 @@ function compileCategories(posts) {
 async function renderPosts(queryString) {
     if (search != "") queryString += "&keywords=" + search;
     hold_Periodic_Refresh = false;
-    showWaitingGif();
+    addWaitingGif();
     $("#actionTitle").text("Liste des publications");
     $("#createPost").show();
     $("#abort").hide();
@@ -139,11 +139,11 @@ async function renderPosts(queryString) {
     currentETag = response.ETag;
     let Posts = response;
     compileCategories(Posts)
-    eraseContent();
+    //eraseContent();
     if (Posts !== null) {
         Posts.forEach(Post => {
             if ((selectedCategory === "") || (selectedCategory === Post.Category))
-                $("#content").append(renderPost(Post));
+                $("#postsPanel").append(renderPost(Post));
         });
         restoreContentScrollPosition();
         // Attached click events on command icons
@@ -159,13 +159,60 @@ async function renderPosts(queryString) {
     } else {
         renderError("Service introuvable");
     }
+    removeWaitingGif();
 }
-function showWaitingGif() {
-    $("#content").empty();
-    $("#content").append($("<div class='waitingGifcontainer'><img class='waitingGif' src='Loading_icon.gif' /></div>'"));
+function addWaitingGif() {
+    $("#postsPanel").append($("<div id='waitingGif' class='waitingGifcontainer'><img class='waitingGif' src='Loading_icon.gif' /></div>'"));
 }
+function renderPost(post) {
+
+    return $(`
+        <div class="postRow" post_id=${post.Id}">
+            <div class="postContainer">
+                <span class="postCategory">${post.Category}</span>
+                <div class="cmdIconsContainer">
+                    <span class="editCmd cmdIcon fa fa-pencil" editPostId="${post.Id}" title="Modifier ${post.Title}"></span>
+                    <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${post.Id}" title="Effacer ${post.Title}"></span>
+                </div>
+                    <span class="postTitle">${post.Title}</span>
+                    <div class="postImage" style="background-image:url('${post.Image}')"></div>
+                    <span class="postDate">${secondsToDateString(post.Creation)}</span>
+                    <br>
+                    <span class="postDescriptionContainer collapsed">${post.Text}</span>
+                    <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
+           </div>
+       </div>           
+       `);
+
+    // return $(`
+    //     <div class="postContainer">
+    //         <span class="postCategory">${Post.Category}</span>
+    //         <div class="cmdIconsContainer">
+    //             <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
+    //             <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
+    //         </div>
+    //         <span class="postTitle">${Post.Title}</span>
+    //         <div class="postImage" style="background-image:url('${Post.Image}')"></div>
+    //         <span class="postDate">${secondsToDateString(Post.Creation)}</span>
+    //         <br>
+    //         <span class="postDescriptionContainer collapsed">${Post.Text}</span>
+    //         <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
+    //     </div>
+    //     <hr>
+    // `);
+}
+
 function eraseContent() {
     $("#content").empty();
+    // $("#content").append(
+    //     $(`
+    //         <div id="scrollPanel">
+    //             <div id="postsPanel" class="postsContainer">
+                    
+    //             </div>
+    //         </div>
+    //     `)
+    // );
 }
 function saveContentScrollPosition() {
     contentScrollPosition = $("#content")[0].scrollTop;
@@ -187,13 +234,14 @@ function renderCreatePostForm() {
     renderPostForm();
 }
 async function renderEditPostForm(id) {
-    showWaitingGif();
+    addWaitingGif();
     let response = await API_GetPost(id)
     let Post = response;
     if (Post !== null)
         renderPostForm(Post);
     else
         renderError("Post introuvable!");
+    removeWaitingGif();
 }
 async function renderDeletePostForm(id) {
     showWaitingGif();
@@ -231,7 +279,7 @@ async function renderDeletePostForm(id) {
            </div>    
         `);
         $('#deletePost').on("click", async function () {
-            showWaitingGif();
+            addWaitingGif();
             let result = await API_DeletePost(Post.Id);
             if (result)
                 //renderPosts();
@@ -240,8 +288,9 @@ async function renderDeletePostForm(id) {
                 renderError("Une erreur est survenue!");
         });
         $('#cancel').on("click", function () {
-            //renderPosts();
+            eraseContent();
             pageManager.reset();
+            renderPosts();
         });
     } else {
         renderError("Publication introuvable!");
@@ -254,6 +303,9 @@ function getFormData($form) {
         jsonObject[control.name] = control.value.replace(removeTag, "");
     });
     return jsonObject;
+}
+function removeWaitingGif() {
+    $("#waitingGif").remove('');
 }
 function newPost() {
     Post = {};
@@ -271,7 +323,7 @@ function renderPostForm(Post = null) {
     eraseContent();
     hold_Periodic_Refresh = true;
     let create = Post == null;
-    if (create){
+    if (create) {
         Post = newPost();
         Post.Image = "images/noPic.jpg";
     }
@@ -338,19 +390,20 @@ function renderPostForm(Post = null) {
     $('#PostForm').on("submit", async function (event) {
         event.preventDefault();
         let Post = getFormData($("#PostForm"));
-        showWaitingGif();
+        addWaitingGif();
         let result = await API_SavePost(Post, create);
+        eraseContent();
         if (result)
-            //renderPosts();
             pageManager.reset();
-
         else
             renderError("Une erreur est survenue!");
+
     });
     $('#cancel').on("click", function () {
-        //renderPosts();
+        addWaitingGif();
+        eraseContent();
         pageManager.reset();
-    });
+        });
 }
 function makeFavicon(url, big = false) {
     // Utiliser l'API de google pour extraire le favicon du site pointé par url
@@ -362,26 +415,7 @@ function makeFavicon(url, big = false) {
     url = "http://www.google.com/s2/favicons?sz=64&domain=" + url;
     return `<div class="${faviconClass}" style="background-image: url('${url}');"></div>`;
 }
-function renderPost(Post) {
-    return $(`
-        <div class="postContainer">
-            <span class="postCategory">${Post.Category}</span>
-            <div class="cmdIconsContainer">
-                <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-                <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
-            </div>
-            <span class="postTitle">${Post.Title}</span>
-            <div class="postImage" style="background-image:url('${Post.Image}')"></div>
-            <span class="postDate">${secondsToDateString(Post.Creation)}</span>
-            <br>
-            <span class="postDescriptionContainer collapsed">${Post.Text}</span>
-            <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
-        </div>
-        <hr>
-    `);
-}
-
-$(document).on('click', '.showMoreBtn', function() {
+$(document).on('click', '.showMoreBtn', function () {
     const $descriptionContainer = $(this).siblings('.postDescriptionContainer');
 
     // Toggle the expanded class

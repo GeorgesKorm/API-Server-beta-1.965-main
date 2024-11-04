@@ -177,7 +177,7 @@
 .postImage {
     grid-column: 1 / span 2;
     grid-row: 3;
-    background-image: url('http://localhost:5000/assetsRepository/78f177e0-46c0-11ee-9c7d-4dfffb69e19c.png');
+    /* background-image: url('http://localhost:5000/assetsRepository/78f177e0-46c0-11ee-9c7d-4dfffb69e19c.png'); */
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
