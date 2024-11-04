@@ -18,6 +18,8 @@ async function Init_UI() {
         height: $("#sample").outerHeight()
     };
     currentETag = await HEAD();
+    let Posts = await API_GetPosts("?limit=1000&offset=0");  // Fetch all posts for categories
+    compileCategories(Posts);
     pageManager = new PageManager('scrollPanel', 'postsPanel', postItemLayout, renderPosts);
     //renderPosts();
     $('#createPost').on("click", async function () {
@@ -139,7 +141,7 @@ async function renderPosts(queryString) {
     currentETag = response.ETag;
     let Posts = response;
     //Posts.sort((a, b) => b.Creation - a.Creation);
-    compileCategories(Posts)
+    // compileCategories(Posts)
     //eraseContent();
     if (Posts !== null) {
         Posts.forEach(Post => {
