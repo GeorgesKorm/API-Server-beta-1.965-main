@@ -1,1 +1,139 @@
-[]
+[
+    {
+        "Id": "3e858a81-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Explosion dans une usine de feux d'artifice",
+        "Text": "Une usine de feux d'artifice a explosé, blessant plusieurs employés.",
+        "Category": "Accident",
+        "Creation": 1730743501,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a82-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Découverte d'un trésor dans une vieille maison",
+        "Text": "Un trésor a été trouvé lors de la rénovation d'une maison ancienne.",
+        "Category": "Découverte",
+        "Creation": 1730743562,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a83-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Invasion de sauterelles à Montréal",
+        "Text": "Une invasion de sauterelles menace les récoltes de la région.",
+        "Category": "Environnement",
+        "Creation": 1730743623,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a84-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Accident de voiture spectaculaire",
+        "Text": "Une voiture a percuté un arbre à grande vitesse. Heureusement, personne n'a été blessé.",
+        "Category": "Accident",
+        "Creation": 1730743684,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a85-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Nouvelle espèce de poisson découverte",
+        "Text": "Une équipe de biologistes a découvert un poisson inconnu dans les eaux du Saint-Laurent.",
+        "Category": "Science",
+        "Creation": 1730743745,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a86-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Tempête de neige record attendue",
+        "Text": "Les météorologues prévoient une tempête de neige qui pourrait battre des records.",
+        "Category": "Météo",
+        "Creation": 1730743806,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a87-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Concert annulé suite à une panne d'électricité",
+        "Text": "Une panne a causé l'annulation d'un concert attendu au stade local.",
+        "Category": "Divertissement",
+        "Creation": 1730743867,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a88-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Record de saut en parachute battu",
+        "Text": "Un athlète a battu le record de saut en parachute en altitude.",
+        "Category": "Sport",
+        "Creation": 1730743928,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a89-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Éclipse solaire visible ce week-end",
+        "Text": "Une éclipse solaire partielle sera visible ce samedi matin.",
+        "Category": "Science",
+        "Creation": 1730743989,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a8a-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Incendie dans un immeuble de bureaux",
+        "Text": "Un incendie s'est déclaré dans un immeuble, mais aucune victime n'est à déplorer.",
+        "Category": "Faits Divers",
+        "Creation": 1730744050,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a8b-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Nouveau restaurant végétarien en ville",
+        "Text": "Un restaurant végétarien proposant des plats innovants a ouvert ses portes.",
+        "Category": "Gastronomie",
+        "Creation": 1730744111,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a8c-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Découverte d'un remède expérimental",
+        "Text": "Un laboratoire a mis au point un traitement expérimental contre une maladie rare.",
+        "Category": "Santé",
+        "Creation": 1730744172,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a8d-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Le marché de Noël ouvre ses portes",
+        "Text": "Le célèbre marché de Noël revient avec de nouvelles attractions cette année.",
+        "Category": "Événement",
+        "Creation": 1730744233,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a8e-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Découverte d'une ancienne grotte",
+        "Text": "Des archéologues ont mis à jour une grotte avec des peintures préhistoriques.",
+        "Category": "Archéologie",
+        "Creation": 1730744294,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a8f-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Nouvelle application mobile pour les transports",
+        "Text": "Une application innovante pour optimiser les trajets en transport en commun est lancée.",
+        "Category": "Technologie",
+        "Creation": 1730744355,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a90-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Un parc animalier ouvre près de la ville",
+        "Text": "Un parc pour observer des animaux en liberté ouvre ses portes aux visiteurs.",
+        "Category": "Événement",
+        "Creation": 1730744416,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    },
+    {
+        "Id": "3e858a91-9ad7-11ef-862f-4d523ee5a5b9",
+        "Title": "Les robots arrivent dans les hôpitaux",
+        "Text": "Des robots médicaux pour assister le personnel soignant sont introduits dans les hôpitaux.",
+        "Category": "Santé",
+        "Creation": 1730744416,
+        "Image": "3e86c300-9ad7-11ef-862f-4d523ee5a5b9.jpeg"
+    }
+]
+       
