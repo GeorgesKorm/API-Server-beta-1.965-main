@@ -203,7 +203,7 @@ function renderPost(post) {
 }
 
 function eraseContent() {
-    $("#content").empty();
+    $("#postsPanel").empty();
     // $("#content").append(
     //     $(`
     //         <div id="scrollPanel">
@@ -222,7 +222,7 @@ function restoreContentScrollPosition() {
 }
 function renderError(message) {
     eraseContent();
-    $("#content").append(
+    $("#postsPanel").append(
         $(`
             <div class="errorContainer">
                 ${message}
@@ -244,7 +244,7 @@ async function renderEditPostForm(id) {
     removeWaitingGif();
 }
 async function renderDeletePostForm(id) {
-    showWaitingGif();
+    addWaitingGif();
     $("#createPost").hide();
     $("#abort").show();
     $("#actionTitle").text("Retrait");
@@ -253,7 +253,7 @@ async function renderDeletePostForm(id) {
     // let favicon = makeFavicon(Post.Image); //not useful maybe
     eraseContent();
     if (Post !== null) {
-        $("#content").append(`
+        $("#postsPanel").append(`
         <div class="PostdeleteForm">
             <h4>Effacer la publication suivante?</h4>
             <br>
@@ -329,7 +329,7 @@ function renderPostForm(Post = null) {
     }
     else
         $("#actionTitle").text(create ? "Création" : "Modification");
-    $("#content").append(`
+    $("#postsPanel").append(`
         <form class="form" id="PostForm">
             <a href="${Post.Title}" target="_blank" id="faviconLink" class="big-favicon" ></a>
             <br>
