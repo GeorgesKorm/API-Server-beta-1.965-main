@@ -19,13 +19,11 @@ async function Init_UI() {
     };
     currentETag = await HEAD();
     pageManager = new PageManager('scrollPanel', 'postsPanel', postItemLayout, renderPosts);
-    //renderPosts();
     $('#createPost').on("click", async function () {
         saveContentScrollPosition();
         renderCreatePostForm();
     });
     $('#abort').on("click", async function () {
-        //renderPosts();
         pageManager.reset();
     });
     $('#aboutCmd').on("click", function () {
@@ -49,7 +47,6 @@ function start_Periodic_Refresh() {
             let etag = await HEAD();
             if (currentETag != etag) {
                 currentETag = etag;
-                //renderPosts();
                 pageManager.reset();
             }
         }
@@ -110,11 +107,9 @@ function updateDropDownMenu(categories) {
     });
     $('#allCatCmd').on("click", function () {
         selectedCategory = "";
-        //renderPosts();
     });
     $('.category').on("click", function () {
         selectedCategory = $(this).text().trim();
-        //renderPosts();
         pageManager.reset();
     });
 }
@@ -131,15 +126,17 @@ function compileCategories(posts) {
 async function renderPosts(queryString) {
     if (search != "") queryString += "&keywords=" + search;
     hold_Periodic_Refresh = false;
-    addWaitingGif();
+    // addWaitingGif();
     $("#actionTitle").text("Liste des publications");
     $("#createPost").show();
     $("#abort").hide();
     let response = await API_GetPosts(queryString);
     currentETag = response.ETag;
     let Posts = response;
+    Posts.sort((a,b)=> b.Creation - a.Creation);
     compileCategories(Posts)
     //eraseContent();
+    // removeWaitingGif();
     if (Posts !== null) {
         Posts.forEach(Post => {
             if ((selectedCategory === "") || (selectedCategory === Post.Category))
@@ -155,11 +152,9 @@ async function renderPosts(queryString) {
             saveContentScrollPosition();
             renderDeletePostForm($(this).attr("deletePostId"));
         });
-        // $(".PostRow").on("click", function (e) { e.preventDefault(); })
     } else {
         renderError("Service introuvable");
     }
-    removeWaitingGif();
 }
 function addWaitingGif() {
     $("#postsPanel").append($("<div id='waitingGif' class='waitingGifcontainer'><img class='waitingGif' src='Loading_icon.gif' /></div>'"));
@@ -183,36 +178,11 @@ function renderPost(post) {
            </div>
        </div>           
        `);
-
-    // return $(`
-    //     <div class="postContainer">
-    //         <span class="postCategory">${Post.Category}</span>
-    //         <div class="cmdIconsContainer">
-    //             <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-    //             <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
-    //         </div>
-    //         <span class="postTitle">${Post.Title}</span>
-    //         <div class="postImage" style="background-image:url('${Post.Image}')"></div>
-    //         <span class="postDate">${secondsToDateString(Post.Creation)}</span>
-    //         <br>
-    //         <span class="postDescriptionContainer collapsed">${Post.Text}</span>
-    //         <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
-    //     </div>
-    //     <hr>
-    // `);
 }
 
 function eraseContent() {
     $("#postsPanel").empty();
-    // $("#content").append(
-    //     $(`
-    //         <div id="scrollPanel">
-    //             <div id="postsPanel" class="postsContainer">
-                    
-    //             </div>
-    //         </div>
-    //     `)
-    // );
+
 }
 function saveContentScrollPosition() {
     contentScrollPosition = $("#content")[0].scrollTop;
@@ -234,6 +204,7 @@ function renderCreatePostForm() {
     renderPostForm();
 }
 async function renderEditPostForm(id) {
+    hold_Periodic_Refresh = true;
     addWaitingGif();
     let response = await API_GetPost(id)
     let Post = response;
@@ -244,6 +215,7 @@ async function renderEditPostForm(id) {
     removeWaitingGif();
 }
 async function renderDeletePostForm(id) {
+    hold_Periodic_Refresh = true;
     addWaitingGif();
     $("#createPost").hide();
     $("#abort").show();

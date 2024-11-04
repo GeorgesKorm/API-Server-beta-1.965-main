@@ -19,7 +19,7 @@ function API_GetPosts(query = "") {
     return new Promise(resolve => {
         $.ajax({
             url: API_URL+query,
-            success: posts => { currentHttpError = ""; resolve(posts); },
+            success: posts =>{ currentHttpError = ""; resolve(posts); },
             error: (xhr) => { console.log(xhr); resolve(null); }
         });
     });
