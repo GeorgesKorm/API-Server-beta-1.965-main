@@ -24,6 +24,8 @@ async function Init_UI() {
         renderCreatePostForm();
     });
     $('#abort').on("click", async function () {
+        $("#scrollPanel").show();
+        $(".aboutContainer").hide();
         pageManager.reset();
     });
     $('#aboutCmd').on("click", function () {
@@ -57,16 +59,17 @@ function start_Periodic_Refresh() {
 function renderAbout() {
     saveContentScrollPosition();
     eraseContent();
+    $("#scrollPanel").hide();
     $("#createPost").hide();
     $("#abort").show();
     $("#actionTitle").text("À propos...");
     $("#content").append(
         $(`
             <div class="aboutContainer">
-                <h2>Gestionnaire de favoris</h2>
+                <h2>Gestionnaire de publications</h2>
                 <hr>
                 <p>
-                    Petite application de gestion de favoris à titre de démonstration
+                    Petite application de gestion de publications à titre de démonstration
                     d'interface utilisateur monopage réactive.
                 </p>
                 <p>
@@ -182,7 +185,9 @@ function renderPost(post) {
 
 function eraseContent() {
     $("#postsPanel").empty();
-
+}
+function hideScrollPanel(){
+    $("#scrollPanel").hide();
 }
 function saveContentScrollPosition() {
     contentScrollPosition = $("#content")[0].scrollTop;
@@ -262,7 +267,6 @@ async function renderDeletePostForm(id) {
         $('#cancel').on("click", function () {
             eraseContent();
             pageManager.reset();
-            renderPosts();
         });
     } else {
         renderError("Publication introuvable!");
