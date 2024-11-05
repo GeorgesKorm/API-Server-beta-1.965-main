@@ -1,4 +1,4 @@
-import PostModel from '../models/Post.js'; //Checker ça? devrait être en minuscule (post)
+import PostModel from '../models/Post.js';
 import Repository from '../models/repository.js';
 import Controller from './Controller.js';
 

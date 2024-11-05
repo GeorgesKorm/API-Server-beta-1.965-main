@@ -21,13 +21,14 @@ async function Init_UI() {
     let Posts = await API_GetPosts("?limit=1000&offset=0");  // Fetch all posts for categories
     compileCategories(Posts);
     pageManager = new PageManager('scrollPanel', 'postsPanel', postItemLayout, renderPosts);
-    //renderPosts();
     $('#createPost').on("click", async function () {
         saveContentScrollPosition();
         renderCreatePostForm();
     });
     $('#abort').on("click", async function () {
-        //renderPosts();
+        $("#search").show();
+        $("#scrollPanel").show();
+        $(".aboutContainer").hide();
         pageManager.reset();
     });
     $('#aboutCmd').on("click", function () {
@@ -51,7 +52,6 @@ function start_Periodic_Refresh() {
             let etag = await HEAD();
             if (currentETag != etag) {
                 currentETag = etag;
-                //renderPosts();
                 pageManager.reset();
             }
         }
@@ -60,8 +60,10 @@ function start_Periodic_Refresh() {
 }
 
 function renderAbout() {
+    $("#search").hide();
     saveContentScrollPosition();
     eraseContent();
+    $("#scrollPanel").hide();
     $("#createPost").hide();
     $("#abort").show();
     $("#actionTitle").text("À propos...");
@@ -71,7 +73,7 @@ function renderAbout() {
                 <h2>Gestionnaire de Publications</h2>
                 <hr>
                 <p>
-                    Petite application de gestion de favoris à titre de démonstration
+                    Petite application de gestion de publications à titre de démonstration
                     d'interface utilisateur monopage réactive.
                 </p>
                 <p>
@@ -117,7 +119,6 @@ function updateDropDownMenu(categories) {
     });
     $('.category').on("click", function () {
         selectedCategory = $(this).text().trim();
-        //renderPosts();
         pageManager.reset();
     });
 }
@@ -132,9 +133,11 @@ function compileCategories(posts) {
     }
 }
 async function renderPosts(queryString) {
+    if($("#PostForm").val() == undefined){
+
     if (search != "") queryString += "&keywords=" + search;
     hold_Periodic_Refresh = false;
-    addWaitingGif();
+    // addWaitingGif();
     $("#actionTitle").text("Liste des publications");
     $("#createPost").show();
     $("#abort").hide();
@@ -145,6 +148,7 @@ async function renderPosts(queryString) {
     //Posts.sort((a, b) => b.Creation - a.Creation);
     compileCategories(PostsCat);
     //eraseContent();
+    // removeWaitingGif();
     if (Posts !== null) {
         Posts.forEach(Post => {
             if ((selectedCategory === "") || (selectedCategory === Post.Category))
@@ -160,64 +164,36 @@ async function renderPosts(queryString) {
             saveContentScrollPosition();
             renderDeletePostForm($(this).attr("deletePostId"));
         });
-        // $(".PostRow").on("click", function (e) { e.preventDefault(); })
     } else {
         renderError("Service introuvable");
     }
-    removeWaitingGif();
+}
 }
 function addWaitingGif() {
     $("#postsPanel").append($("<div id='waitingGif' class='waitingGifcontainer'><img class='waitingGif' src='Loading_icon.gif' /></div>'"));
 }
 function renderPost(post) {
-
-    return $(`
-        <div class="postRow" post_id=${post.Id}">
-            <div class="postContainer">
-                <span class="postCategory">${post.Category}</span>
-                <div class="cmdIconsContainer">
-                    <span class="editCmd cmdIcon fa fa-pencil" editPostId="${post.Id}" title="Modifier ${post.Title}"></span>
-                    <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${post.Id}" title="Effacer ${post.Title}"></span>
-                </div>
-                    <span class="postTitle">${post.Title}</span>
-                    <div class="postImage" style="background-image:url('${post.Image}')"></div>
-                    <span class="postDate">${secondsToDateString(post.Creation)}</span>
-                    <br>
-                    <span class="postDescriptionContainer collapsed">${post.Text}</span>
-                    <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
-           </div>
-       </div>           
-       `);
-
-    // return $(`
-    //     <div class="postContainer">
-    //         <span class="postCategory">${Post.Category}</span>
-    //         <div class="cmdIconsContainer">
-    //             <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-    //             <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
-    //         </div>
-    //         <span class="postTitle">${Post.Title}</span>
-    //         <div class="postImage" style="background-image:url('${Post.Image}')"></div>
-    //         <span class="postDate">${secondsToDateString(Post.Creation)}</span>
-    //         <br>
-    //         <span class="postDescriptionContainer collapsed">${Post.Text}</span>
-    //         <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
-    //     </div>
-    //     <hr>
-    // `);
-}
+        return $(`
+            <div class="postRow" post_id=${post.Id}">
+                <div class="postContainer">
+                    <span class="postCategory">${post.Category}</span>
+                    <div class="cmdIconsContainer">
+                        <span class="editCmd cmdIcon fa fa-pencil" editPostId="${post.Id}" title="Modifier ${post.Title}"></span>
+                        <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${post.Id}" title="Effacer ${post.Title}"></span>
+                    </div>
+                        <span class="postTitle">${post.Title}</span>
+                        <div class="postImage" style="background-image:url('${post.Image}')"></div>
+                        <span class="postDate">${secondsToDateString(post.Creation)}</span>
+                        <br>
+                        <span class="postDescriptionContainer collapsed">${post.Text}</span>
+                        <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
+               </div>
+           </div>           
+           `);
+    }
 
 function eraseContent() {
     $("#postsPanel").empty();
-    // $("#content").append(
-    //     $(`
-    //         <div id="scrollPanel">
-    //             <div id="postsPanel" class="postsContainer">
-                    
-    //             </div>
-    //         </div>
-    //     `)
-    // );
 }
 function saveContentScrollPosition() {
     contentScrollPosition = $("#content")[0].scrollTop;
@@ -239,6 +215,9 @@ function renderCreatePostForm() {
     renderPostForm();
 }
 async function renderEditPostForm(id) {
+    //hideScrollPanel(); //this doesn't work, ça retire notre form, parce qu'il est dans le scrollpanel
+    hold_Periodic_Refresh = true;
+    $("#search").hide();
     addWaitingGif();
     let response = await API_GetPost(id)
     let Post = response;
@@ -249,7 +228,9 @@ async function renderEditPostForm(id) {
     removeWaitingGif();
 }
 async function renderDeletePostForm(id) {
+    hold_Periodic_Refresh = true;
     addWaitingGif();
+    $("#search").hide();
     $("#createPost").hide();
     $("#abort").show();
     $("#actionTitle").text("Retrait");
@@ -285,6 +266,7 @@ async function renderDeletePostForm(id) {
         `);
         $('#deletePost').on("click", async function () {
             addWaitingGif();
+            $("#search").show();
             let result = await API_DeletePost(Post.Id);
             if (result)
                 //renderPosts();
@@ -293,9 +275,9 @@ async function renderDeletePostForm(id) {
                 renderError("Une erreur est survenue!");
         });
         $('#cancel').on("click", function () {
+            $("#search").show();
             eraseContent();
             pageManager.reset();
-            renderPosts();
         });
     } else {
         renderError("Publication introuvable!");
@@ -398,6 +380,7 @@ function renderPostForm(Post = null) {
         addWaitingGif();
         let result = await API_SavePost(Post, create);
         eraseContent();
+        $("#search").show();
         if (result)
             pageManager.reset();
         else
@@ -408,6 +391,7 @@ function renderPostForm(Post = null) {
         addWaitingGif();
         eraseContent();
         pageManager.reset();
+        $("#search").show();
         });
 }
 function makeFavicon(url, big = false) {
