@@ -113,6 +113,7 @@ function updateDropDownMenu(categories) {
     $('#allCatCmd').on("click", function () {
         selectedCategory = "";
         //renderPosts();
+        pageManager.reset();
     });
     $('.category').on("click", function () {
         selectedCategory = $(this).text().trim();
@@ -140,8 +141,9 @@ async function renderPosts(queryString) {
     let response = await API_GetPosts(queryString);
     currentETag = response.ETag;
     let Posts = response;
+    let PostsCat = await API_GetPosts("?limit=1000&offset=0");
     //Posts.sort((a, b) => b.Creation - a.Creation);
-    // compileCategories(Posts)
+    compileCategories(PostsCat);
     //eraseContent();
     if (Posts !== null) {
         Posts.forEach(Post => {
