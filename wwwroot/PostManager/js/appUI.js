@@ -18,6 +18,8 @@ async function Init_UI() {
         height: $("#sample").outerHeight()
     };
     currentETag = await HEAD();
+    let Posts = await API_GetPosts("?limit=1000&offset=0");  // Fetch all posts for categories
+    compileCategories(Posts);
     pageManager = new PageManager('scrollPanel', 'postsPanel', postItemLayout, renderPosts);
     $('#createPost').on("click", async function () {
         saveContentScrollPosition();
@@ -68,7 +70,7 @@ function renderAbout() {
     $("#content").append(
         $(`
             <div class="aboutContainer">
-                <h2>Gestionnaire de publications</h2>
+                <h2>Gestionnaire de Publications</h2>
                 <hr>
                 <p>
                     Petite application de gestion de publications à titre de démonstration
@@ -112,6 +114,8 @@ function updateDropDownMenu(categories) {
     });
     $('#allCatCmd').on("click", function () {
         selectedCategory = "";
+        //renderPosts();
+        pageManager.reset();
     });
     $('.category').on("click", function () {
         selectedCategory = $(this).text().trim();
@@ -140,8 +144,9 @@ async function renderPosts(queryString) {
     let response = await API_GetPosts(queryString);
     currentETag = response.ETag;
     let Posts = response;
-    Posts.sort((a,b)=> b.Creation - a.Creation);
-    compileCategories(Posts)
+    let PostsCat = await API_GetPosts("?limit=1000&offset=0");
+    //Posts.sort((a, b) => b.Creation - a.Creation);
+    compileCategories(PostsCat);
     //eraseContent();
     // removeWaitingGif();
     if (Posts !== null) {
