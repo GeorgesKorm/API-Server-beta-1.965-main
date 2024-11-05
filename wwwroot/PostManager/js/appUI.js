@@ -24,6 +24,7 @@ async function Init_UI() {
         renderCreatePostForm();
     });
     $('#abort').on("click", async function () {
+        $("#search").show();
         $("#scrollPanel").show();
         $(".aboutContainer").hide();
         pageManager.reset();
@@ -57,6 +58,7 @@ function start_Periodic_Refresh() {
 }
 
 function renderAbout() {
+    $("#search").hide();
     saveContentScrollPosition();
     eraseContent();
     $("#scrollPanel").hide();
@@ -127,6 +129,8 @@ function compileCategories(posts) {
     }
 }
 async function renderPosts(queryString) {
+    if($("#PostForm").val() == undefined){
+
     if (search != "") queryString += "&keywords=" + search;
     hold_Periodic_Refresh = false;
     // addWaitingGif();
@@ -159,35 +163,32 @@ async function renderPosts(queryString) {
         renderError("Service introuvable");
     }
 }
+}
 function addWaitingGif() {
     $("#postsPanel").append($("<div id='waitingGif' class='waitingGifcontainer'><img class='waitingGif' src='Loading_icon.gif' /></div>'"));
 }
 function renderPost(post) {
-
-    return $(`
-        <div class="postRow" post_id=${post.Id}">
-            <div class="postContainer">
-                <span class="postCategory">${post.Category}</span>
-                <div class="cmdIconsContainer">
-                    <span class="editCmd cmdIcon fa fa-pencil" editPostId="${post.Id}" title="Modifier ${post.Title}"></span>
-                    <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${post.Id}" title="Effacer ${post.Title}"></span>
-                </div>
-                    <span class="postTitle">${post.Title}</span>
-                    <div class="postImage" style="background-image:url('${post.Image}')"></div>
-                    <span class="postDate">${secondsToDateString(post.Creation)}</span>
-                    <br>
-                    <span class="postDescriptionContainer collapsed">${post.Text}</span>
-                    <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
-           </div>
-       </div>           
-       `);
-}
+        return $(`
+            <div class="postRow" post_id=${post.Id}">
+                <div class="postContainer">
+                    <span class="postCategory">${post.Category}</span>
+                    <div class="cmdIconsContainer">
+                        <span class="editCmd cmdIcon fa fa-pencil" editPostId="${post.Id}" title="Modifier ${post.Title}"></span>
+                        <span class="deleteCmd cmdIcon fa-solid fa-x" deletePostId="${post.Id}" title="Effacer ${post.Title}"></span>
+                    </div>
+                        <span class="postTitle">${post.Title}</span>
+                        <div class="postImage" style="background-image:url('${post.Image}')"></div>
+                        <span class="postDate">${secondsToDateString(post.Creation)}</span>
+                        <br>
+                        <span class="postDescriptionContainer collapsed">${post.Text}</span>
+                        <button class="showMoreBtn btn btn-link p-0 mt-2">Afficher Plus</button>
+               </div>
+           </div>           
+           `);
+    }
 
 function eraseContent() {
     $("#postsPanel").empty();
-}
-function hideScrollPanel(){
-    $("#scrollPanel").hide();
 }
 function saveContentScrollPosition() {
     contentScrollPosition = $("#content")[0].scrollTop;
@@ -209,7 +210,9 @@ function renderCreatePostForm() {
     renderPostForm();
 }
 async function renderEditPostForm(id) {
+    //hideScrollPanel(); //this doesn't work, ça retire notre form, parce qu'il est dans le scrollpanel
     hold_Periodic_Refresh = true;
+    $("#search").hide();
     addWaitingGif();
     let response = await API_GetPost(id)
     let Post = response;
@@ -222,6 +225,7 @@ async function renderEditPostForm(id) {
 async function renderDeletePostForm(id) {
     hold_Periodic_Refresh = true;
     addWaitingGif();
+    $("#search").hide();
     $("#createPost").hide();
     $("#abort").show();
     $("#actionTitle").text("Retrait");
@@ -257,6 +261,7 @@ async function renderDeletePostForm(id) {
         `);
         $('#deletePost').on("click", async function () {
             addWaitingGif();
+            $("#search").show();
             let result = await API_DeletePost(Post.Id);
             if (result)
                 //renderPosts();
@@ -265,6 +270,7 @@ async function renderDeletePostForm(id) {
                 renderError("Une erreur est survenue!");
         });
         $('#cancel').on("click", function () {
+            $("#search").show();
             eraseContent();
             pageManager.reset();
         });
@@ -369,6 +375,7 @@ function renderPostForm(Post = null) {
         addWaitingGif();
         let result = await API_SavePost(Post, create);
         eraseContent();
+        $("#search").show();
         if (result)
             pageManager.reset();
         else
@@ -379,6 +386,7 @@ function renderPostForm(Post = null) {
         addWaitingGif();
         eraseContent();
         pageManager.reset();
+        $("#search").show();
         });
 }
 function makeFavicon(url, big = false) {
