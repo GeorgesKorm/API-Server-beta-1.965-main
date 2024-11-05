@@ -1,4 +1,4 @@
-const periodicRefreshPeriod = 60;
+const periodicRefreshPeriod = 10;
 let contentScrollPosition = 0;
 let selectedCategory = "";
 let currentETag = "";
@@ -52,7 +52,9 @@ function start_Periodic_Refresh() {
             let etag = await HEAD();
             if (currentETag != etag) {
                 currentETag = etag;
+                saveContentScrollPosition();
                 pageManager.reset();
+                restoreContentScrollPosition();
             }
         }
     },
@@ -196,10 +198,14 @@ function eraseContent() {
     $("#postsPanel").empty();
 }
 function saveContentScrollPosition() {
-    contentScrollPosition = $("#content")[0].scrollTop;
+    console.log($("#scrollPanel")[0]);
+    contentScrollPosition = $("#scrollPanel")[0].scrollTop;
 }
 function restoreContentScrollPosition() {
-    $("#content")[0].scrollTop = contentScrollPosition;
+    console.log("Restore current scroll position "+contentScrollPosition);
+    console.log("Is this the right value? " + $("#scrollPanel")[0].scrollTop);
+    $("#scrollPanel")[0].scrollTop = contentScrollPosition;
+    console.log("Value after restore "+$("#scrollPanel")[0].scrollTop);
 }
 function renderError(message) {
     eraseContent();
