@@ -18,8 +18,10 @@ class PageManager {
     installViewportReziseEvent() {
         let instance = this;
         $(window).on('resize', function (e) {
-            clearTimeout(instance.resizeTimer);
-            instance.resizeTimer = setTimeout(() => { instance.update(false); }, instance.resizeEndTriggerDelai);
+            if($("#PostForm").val() == undefined  && $("#deletePost").val() == undefined){
+                clearTimeout(instance.resizeTimer);
+                instance.resizeTimer = setTimeout(() => { instance.update(false); }, instance.resizeEndTriggerDelai);    
+            }
         });
     }
     setCurrentPageLimit() {
