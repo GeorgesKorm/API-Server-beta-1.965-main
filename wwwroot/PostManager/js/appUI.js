@@ -1,4 +1,4 @@
-const periodicRefreshPeriod = 60;
+const periodicRefreshPeriod = 10;
 let contentScrollPosition = 0;
 let selectedCategory = "";
 let currentETag = "";
@@ -29,7 +29,6 @@ async function Init_UI() {
         $("#search").show();
         $("#scrollPanel").show();
         $(".aboutContainer").hide();
-        pageManager.reset();
     });
     $('#aboutCmd').on("click", function () {
         renderAbout();
@@ -42,6 +41,21 @@ async function Init_UI() {
     })
     start_Periodic_Refresh();
 }
+function showPosts() {
+    $("#actionTitle").text("Liste des publications");
+    $("#scrollPanel").show();
+    $('#abort').hide();
+    $('#postForm').hide();
+    $('#aboutContainer').hide();
+    $("#createPost").show();
+    hold_Periodic_Refresh = false;
+}
+function hidePosts() {
+    $("#scrollPanel").hide();
+    $("#createPost").hide();
+    $("#abort").show();
+    hold_Periodic_Refresh = true;
+}
 function doSearch() {
     search = $("#searchKey").val().replace(' ', ',');
     pageManager.reset();
@@ -52,7 +66,7 @@ function start_Periodic_Refresh() {
             let etag = await HEAD();
             if (currentETag != etag) {
                 currentETag = etag;
-                pageManager.reset();
+                await pageManager.update(false);
             }
         }
     },
@@ -113,11 +127,13 @@ function updateDropDownMenu(categories) {
         renderAbout();
     });
     $('#allCatCmd').on("click", function () {
+        showPosts();
         selectedCategory = "";
         //renderPosts();
         pageManager.reset();
     });
     $('.category').on("click", function () {
+        showPosts();
         selectedCategory = $(this).text().trim();
         pageManager.reset();
     });
@@ -157,14 +173,14 @@ async function renderPosts(queryString) {
             if ((selectedCategory === "") || (selectedCategory === Post.Category))
                 $("#postsPanel").append(renderPost(Post));
         });
-        restoreContentScrollPosition();
+        //restoreContentScrollPosition();
         // Attached click events on command icons
         $(".editCmd").on("click", function () {
             saveContentScrollPosition();
             renderEditPostForm($(this).attr("editPostId"));
         });
         $(".deleteCmd").on("click", function () {
-            saveContentScrollPosition();
+            //saveContentScrollPosition();
             renderDeletePostForm($(this).attr("deletePostId"));
         });
     } else {
@@ -271,16 +287,18 @@ async function renderDeletePostForm(id) {
             addWaitingGif();
             $("#search").show();
             let result = await API_DeletePost(Post.Id);
-            if (result)
+            if (result){
+                showPosts();
                 //renderPosts();
-                pageManager.reset();
+                await pageManager.update(false);
+            }
             else
                 renderError("Une erreur est survenue!");
         });
         $('#cancel').on("click", function () {
             $("#search").show();
+            showPosts();
             eraseContent();
-            pageManager.reset();
         });
     } else {
         renderError("Publication introuvable!");
@@ -384,15 +402,19 @@ function renderPostForm(Post = null) {
         let result = await API_SavePost(Post, create);
         eraseContent();
         $("#search").show();
-        if (result)
-            pageManager.reset();
+        if (result){
+            showPosts();
+            await pageManager.update(false);
+            pageManager.scrollToElem(Post.Id);
+        }
         else
             renderError("Une erreur est survenue!");
 
     });
     $('#cancel').on("click", function () {
+        showPosts();
         addWaitingGif();
-        eraseContent();
+        //eraseContent();
         pageManager.reset();
         $("#search").show();
         });
