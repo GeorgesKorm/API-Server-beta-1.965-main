@@ -1,4 +1,4 @@
-const periodicRefreshPeriod = 60;
+const periodicRefreshPeriod = 10;
 let contentScrollPosition = 0;
 let selectedCategory = "";
 let currentETag = "";
@@ -52,7 +52,9 @@ function start_Periodic_Refresh() {
             let etag = await HEAD();
             if (currentETag != etag) {
                 currentETag = etag;
+                saveContentScrollPosition();
                 pageManager.reset();
+                restoreContentScrollPosition();
             }
         }
     },
@@ -133,7 +135,7 @@ function compileCategories(posts) {
     }
 }
 async function renderPosts(queryString) {
-    if($("#PostForm").val() == undefined){
+    if($("#PostForm").val() == undefined  && $("#deletePost").val() == undefined){
 
     if (search != "") queryString += "&keywords=" + search;
     //queryString += "&sort=category";
@@ -148,7 +150,6 @@ async function renderPosts(queryString) {
     currentETag = response.ETag;
     let Posts = response;
     let PostsCat = await API_GetPosts("?limit=1000&offset=0");
-    //Posts.sort((a, b) => b.Creation - a.Creation);
     compileCategories(PostsCat);
     //eraseContent();
     // removeWaitingGif();
@@ -199,10 +200,10 @@ function eraseContent() {
     $("#postsPanel").empty();
 }
 function saveContentScrollPosition() {
-    contentScrollPosition = $("#content")[0].scrollTop;
+    contentScrollPosition = $("#scrollPanel")[0].scrollTop;
 }
 function restoreContentScrollPosition() {
-    $("#content")[0].scrollTop = contentScrollPosition;
+    $("#scrollPanel")[0].scrollTop = contentScrollPosition;
 }
 function renderError(message) {
     eraseContent();
