@@ -138,6 +138,9 @@ async function renderPosts(queryString) {
     if($("#PostForm").val() == undefined  && $("#deletePost").val() == undefined){
 
     if (search != "") queryString += "&keywords=" + search;
+    //queryString += "&sort=category";
+    if (selectedCategory != "") queryString += "&category=" + selectedCategory;
+
     hold_Periodic_Refresh = false;
     // addWaitingGif();
     $("#actionTitle").text("Liste des publications");
