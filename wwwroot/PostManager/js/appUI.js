@@ -135,7 +135,7 @@ function compileCategories(posts) {
     }
 }
 async function renderPosts(queryString) {
-    if($("#PostForm").val() == undefined){
+    if($("#PostForm").val() == undefined  && $("#deletePost").val() == undefined){
 
     if (search != "") queryString += "&keywords=" + search;
     hold_Periodic_Refresh = false;
@@ -147,7 +147,6 @@ async function renderPosts(queryString) {
     currentETag = response.ETag;
     let Posts = response;
     let PostsCat = await API_GetPosts("?limit=1000&offset=0");
-    //Posts.sort((a, b) => b.Creation - a.Creation);
     compileCategories(PostsCat);
     //eraseContent();
     // removeWaitingGif();
@@ -198,14 +197,10 @@ function eraseContent() {
     $("#postsPanel").empty();
 }
 function saveContentScrollPosition() {
-    console.log($("#scrollPanel")[0]);
     contentScrollPosition = $("#scrollPanel")[0].scrollTop;
 }
 function restoreContentScrollPosition() {
-    console.log("Restore current scroll position "+contentScrollPosition);
-    console.log("Is this the right value? " + $("#scrollPanel")[0].scrollTop);
     $("#scrollPanel")[0].scrollTop = contentScrollPosition;
-    console.log("Value after restore "+$("#scrollPanel")[0].scrollTop);
 }
 function renderError(message) {
     eraseContent();
